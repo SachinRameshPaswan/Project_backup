@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en" class="light"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Connect & Found</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Enables toggling via class="dark"
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+    <link rel="icon" href="data:,">
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-white flex h-screen overflow-hidden transition-colors duration-300">
+
+    <aside id="sidebar" class="w-72 bg-white dark:bg-darkCard border-r border-slate-200 dark:border-slate-700 hidden md:flex flex-col justify-between p-6 z-50 shadow-xl transition-colors duration-300">
+        <div>
+            <div class="flex items-center gap-3 mb-10 px-2">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                    <i class="ph-bold ph-magnifying-glass text-xl"></i>
+                </div>
+                <h1 class="text-lg font-bold leading-tight">Connect &<br>Found</h1>
+            </div>
+
+            <nav class="space-y-2">
+                <button onclick="showSection('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 text-sm font-semibold text-indigo-600 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-400 rounded-2xl transition-all">
+                    <i class="ph-fill ph-squares-four text-lg"></i> Dashboard
+                </button>
+                <button onclick="showSection('profile')" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl transition-all">
+                    <i class="ph-bold ph-user text-lg"></i> My Profile
+                </button>
+                <button onclick="showSection('my-reports')" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl transition-all">
+                    <i class="ph-bold ph-files text-lg"></i> My Reports
+                </button>
+                <button onclick="showSection('rewards')" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl transition-all">
+                    <i class="ph-bold ph-trophy text-lg"></i> Rewards
+                </button>
+                <button onclick="showSection('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl transition-all">
+                    <i class="ph-bold ph-gear text-lg"></i> Settings
+                </button>
+            </nav>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-md">
+                <span id="user-initial">U</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p id="nav-user-name" class="text-sm font-bold truncate">Loading...</p>
+                <p id="nav-user-role" class="text-xs text-slate-500 dark:text-slate-400 font-medium">Student</p>
+            </div>
+
+        </div>
+        <div class="mt-auto pt-4 border-t border-slate-200 dark:border-slate-700">
+        <button id="logout-btn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all">
+            <i class="ph-bold ph-sign-out text-lg"></i> 
+            Log Out
+        </button>
+    </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-slate-50 dark:bg-darkBg transition-colors duration-300">
+        
+        <header class="px-8 py-5 flex justify-between items-center bg-white/80 dark:bg-darkCard/80 backdrop-blur-md sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
+            
+            <button onclick="toggleMobileMenu()" class="md:hidden text-2xl text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition"><i class="ph ph-list"></i></button>
+
+            <div class="absolute left-1/2 transform -translate-x-1/2 text-center">
+                <h2 id="greeting-text" class="text-xl font-bold text-slate-800 dark:text-white">Hello  User</h2>
+                <p class="text-xs text-slate-400">Welcome back</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-yellow-400 hover:scale-110 transition">
+                    <i id="theme-icon" class="ph-fill ph-moon text-xl"></i>
+                </button>
+
+                <div class="hidden md:flex bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-4 py-2 rounded-full shadow-sm items-center gap-2">
+                   <div class="hidden md:flex bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-4 py-2 rounded-xl shadow-sm items-center gap-3">
+    <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-200 dark:border-indigo-800">
+        <i class="ph-bold ph-identification-card text-lg"></i>
+    </div>
+    <div class="flex flex-col leading-none">
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Student ID</span>
+        <span id="header-student-id" class="font-bold text-slate-800 dark:text-white text-sm">Loading...</span>
+    </div>
+</div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-8">
+            
+            <section id="view-dashboard" class="space-y-8 animate-fade-in">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <button onclick="showSection('report-lost')" class="group relative overflow-hidden bg-white dark:bg-darkCard p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg transition-all text-left">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <i class="ph-fill ph-warning-circle text-9xl text-red-500"></i>
+                        </div>
+                        <div class="p-3 w-14 h-14 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-2xl mb-4 flex items-center justify-center">
+                            <i class="ph-bold ph-warning-circle text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">I Lost Something</h3>
+                        <p class="text-slate-500 dark:text-slate-400">Report a lost item and let AI generate an image for you.</p>
+                    </button>
+
+                    <button onclick="showSection('report-found')" class="group relative overflow-hidden bg-white dark:bg-darkCard p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg transition-all text-left">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <i class="ph-fill ph-hand-heart text-9xl text-emerald-500"></i>
+                        </div>
+                        <div class="p-3 w-14 h-14 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 rounded-2xl mb-4 flex items-center justify-center">
+                            <i class="ph-bold ph-hand-heart text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">I Found Something</h3>
+                        <p class="text-slate-500 dark:text-slate-400">Upload a photo to help return an item to its owner.</p>
+                    </button>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white">Recent Activity</h3>
+                        <div class="flex gap-2">
+                            <button onclick="filterFeed('all')" class="px-3 py-1 text-xs font-bold bg-indigo-600 text-white rounded-lg">All</button>
+                            <button onclick="filterFeed('LOST')" class="px-3 py-1 text-xs font-bold bg-white dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-600 rounded-lg">Lost</button>
+                            <button onclick="filterFeed('FOUND')" class="px-3 py-1 text-xs font-bold bg-white dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-600 rounded-lg">Found</button>
+                        </div>
+                    </div>
+                    
+                    <div id="feed-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                </div>
+            </section>
+
+            <section id="view-report-lost" class="hidden max-w-2xl mx-auto animate-fade-in">
+    <div class="bg-white dark:bg-darkCard p-8 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700">
+        
+        <div class="flex items-center gap-3 mb-6">
+            <div class="p-3 bg-red-100 text-red-600 rounded-xl">
+                <i class="ph-bold ph-warning-circle text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Report Lost Item</h2>
+        </div>
+
+       <form id="lost-form" class="space-y-5">
+    
+    <div>
+        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Item Name <span class="text-red-500">*</span></label>
+        <input type="text" id="lost-title" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl dark:text-white">
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Date Lost <span class="text-red-500">*</span></label>
+            <input type="date" id="lost-date" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl dark:text-white">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Time</label>
+            <input type="time" id="lost-time" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl dark:text-white">
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Location <span class="text-red-500">*</span></label>
+        <input type="text" id="lost-location" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl dark:text-white">
+    </div>
+
+    <div>
+        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Description <span class="text-red-500">*</span></label>
+        <textarea id="lost-desc" required rows="3" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl dark:text-white" placeholder="Describe it to help the AI..."></textarea>
+    </div>
+
+    <input type="file" id="lost-image" accept="image/*">
+
+
+    <div id="ai-preview-container" class="hidden text-center p-4 border-2 border-dashed border-indigo-200 dark:border-slate-700 rounded-xl bg-indigo-50 dark:bg-slate-800/50">
+        <p class="text-xs text-indigo-500 font-bold mb-2">AI PREVIEW (Is this your item?)</p>
+        <img id="ai-preview-image" src="" class="w-48 h-48 mx-auto rounded-lg shadow-md object-contain bg-white">
+        <p class="text-xs text-slate-400 mt-2">If not correct, change description and click Generate again.</p>
+    </div>
+
+    <div class="flex gap-3">
+        <button type="button" id="generate-btn" class="px-4 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition">
+
+            <i class="ph-bold ph-magic-wand"></i> Generate Image
+        </button>
+
+        <button type="submit" id="submit-lost-btn" disabled
+                class="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition opacity-50 cursor-not-allowed">
+            Submit Report
+        </button>
+    </div>
+
+</form>
+        
+        <button onclick="showSection('dashboard')" class="w-full mt-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl font-semibold transition">
+            Cancel
+        </button>
+    </div>
+</section>
+
+            <section id="view-report-found" class="hidden max-w-2xl mx-auto animate-fade-in">
+    <div class="bg-white dark:bg-darkCard p-8 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700">
+        
+        <div class="flex items-center gap-3 mb-6">
+            <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl">
+                <i class="ph-bold ph-hand-heart text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Report Found Item</h2>
+        </div>
+
+        <form id="found-form" class="space-y-5">
+            
+            <div>
+                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Item Name <span class="text-red-500">*</span></label>
+                <input type="text" id="found-title" required 
+                       class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none dark:text-white transition"
+                       placeholder="e.g., Black Umbrella">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Date Found <span class="text-red-500">*</span></label>
+                    <input type="date" id="found-date" required 
+                           class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none dark:text-white transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Time (Approx)</label>
+                    <input type="time" id="found-time" required 
+                           class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none dark:text-white transition">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Location Found <span class="text-red-500">*</span></label>
+                <input type="text" id="found-location" required 
+                       class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none dark:text-white transition"
+                       placeholder="e.g., Cafeteria Table 5">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Description <span class="text-red-500">*</span></label>
+                <textarea id="found-desc" required rows="3"
+                          class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none dark:text-white transition"
+                          placeholder="Describe the condition and any distinct features..."></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Upload Photo (Optional)</label>
+                <div class="relative">
+                    <input type="file" id="found-image" accept="image/*"
+                           class="block w-full text-sm text-slate-500 dark:text-slate-400
+                                  file:mr-4 file:py-3 file:px-4
+                                  file:rounded-xl file:border-0
+                                  file:text-sm file:font-bold
+                                  file:bg-emerald-50 file:text-emerald-700
+                                  hover:file:bg-emerald-100
+                                  cursor-pointer bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-600">
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Take a clear photo of the item.</p>
+            </div>
+
+            <button type="submit" id="found-btn"
+                    class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition flex justify-center items-center gap-2">
+                <span>Submit Report</span>
+                <i class="ph-bold ph-paper-plane-right"></i>
+            </button>
+        </form>
+        
+        <button onclick="showSection('dashboard')" class="w-full mt-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl font-semibold transition">
+            Cancel
+        </button>
+    </div>
+</section>
+
+            <section id="view-item-details" class="hidden max-w-4xl mx-auto animate-fade-in">
+                <button onclick="showSection('dashboard')" class="mb-6 flex items-center gap-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 transition">
+                    <i class="ph-bold ph-arrow-left"></i> Back to Dashboard
+                </button>
+                
+                <div class="bg-white dark:bg-darkCard rounded-3xl overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-700 flex flex-col md:flex-row">
+                    <div class="md:w-1/2 bg-slate-100 dark:bg-slate-800 h-64 md:h-auto">
+                        <img id="detail-image" src="" class="w-full h-full object-cover">
+                    </div>
+                    
+                    <div class="md:w-1/2 p-8 md:p-12">
+                        <span id="detail-badge" class="px-3 py-1 rounded-lg text-xs font-bold bg-red-100 text-red-600 mb-4 inline-block">LOST</span>
+                        <h2 id="detail-title" class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Item Name</h2>
+                        <div class="flex items-center gap-2 text-slate-400 mb-6 text-sm">
+                            <i class="ph-fill ph-map-pin"></i> <span id="detail-location">Location</span>
+                            <span>•</span>
+                            <i class="ph-fill ph-calendar"></i> <span id="detail-date">Date</span>
+                        </div>
+                        
+                        <div class="prose dark:prose-invert mb-8">
+                            <h4 class="font-bold text-sm uppercase text-slate-500 mb-2">Description</h4>
+                            <p id="detail-desc" class="text-slate-600 dark:text-slate-300">...</p>
+                        </div>
+
+                        <div class="border-t border-slate-100 dark:border-slate-700 pt-6">
+                            <button id="claim-btn" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition">
+                                Contact / Claim This Item
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-profile" class="hidden max-w-4xl mx-auto animate-fade-in pb-20">
+    <div class="bg-white dark:bg-darkCard rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700 overflow-hidden">
+        
+        <div class="h-32 bg-gradient-to-r from-indigo-500 to-purple-600 relative"></div>
+        
+        <div class="px-8 pb-8">
+            <div class="relative -mt-12 mb-8 flex items-end justify-between">
+                <div class="flex items-end gap-6">
+                    <div class="w-24 h-24 rounded-2xl bg-white dark:bg-slate-800 p-1 shadow-xl">
+                        <div class="w-full h-full rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-4xl font-bold text-slate-500">
+                            <span id="profile-initial">U</span>
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <h2 id="profile-name" class="text-3xl font-bold text-slate-800 dark:text-white">Loading...</h2>
+                        <p id="profile-email" class="text-slate-500 dark:text-slate-400">user@example.com</p>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <span id="profile-role" class="px-4 py-2 rounded-xl bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-100 dark:border-slate-700">
+                        STUDENT
+                    </span>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 mb-8 border border-slate-100 dark:border-slate-700">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
+                    Academic Information
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Student ID</p>
+                        <p id="prof-student-id" class="text-lg font-bold text-slate-800 dark:text-white">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Course</p>
+                        <p id="prof-course" class="text-lg font-bold text-slate-800 dark:text-white">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Class</p>
+                        <p id="prof-class" class="text-lg font-bold text-slate-800 dark:text-white">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Division</p>
+                        <p id="prof-division" class="text-lg font-bold text-slate-800 dark:text-white">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Roll No</p>
+                        <p id="prof-roll-no" class="text-lg font-bold text-slate-800 dark:text-white">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Contact No</p>
+                        <p id="prof-contact" class="text-lg font-bold text-slate-800 dark:text-white">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50">
+                    <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">Points</p>
+                    <span id="profile-points" class="text-2xl font-bold text-indigo-700 dark:text-indigo-300">0</span>
+                </div>
+                <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/50">
+                    <p class="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-1">Found</p>
+                    <span id="profile-found-count" class="text-2xl font-bold text-emerald-700 dark:text-emerald-300">0</span>
+                </div>
+                <div class="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50">
+                    <p class="text-xs font-bold text-red-500 uppercase tracking-wider mb-1">Lost</p>
+                    <span id="profile-lost-count" class="text-2xl font-bold text-red-700 dark:text-red-300">0</span>
+                </div>
+            </div>
+
+            <button onclick="logout()" class="w-full py-3 border border-red-200 text-red-500 rounded-xl font-bold hover:bg-red-50 transition flex items-center justify-center gap-2">
+                <i class="ph-bold ph-sign-out"></i> Log Out
+            </button>
+        </div>
+    </div>
+</section>
+
+            <section id="view-rewards" class="hidden max-w-4xl mx-auto animate-fade-in pb-20">
+    
+    <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Hall of Fame</h2>
+        <p class="text-slate-500 dark:text-slate-400">Top students helping the community.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <div class="bg-white dark:bg-darkCard p-6 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-3 bg-yellow-100 text-yellow-600 rounded-xl">
+                    <i class="ph-fill ph-trophy text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Top Helpers</h3>
+            </div>
+
+            <div id="leaderboard-list" class="space-y-4">
+                <div class="text-center py-6 text-slate-400">Loading champions...</div>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-indigo-600 to-purple-700 p-8 rounded-3xl shadow-lg text-white flex flex-col justify-between">
+            <div>
+                <h3 class="text-2xl font-bold mb-2">Your Balance</h3>
+                <div class="flex items-baseline gap-2 mb-6">
+                    <span id="reward-balance" class="text-5xl font-bold">0</span>
+                    <span class="text-indigo-200">Points</span>
+                </div>
+                <p class="text-indigo-100 text-sm mb-6">
+                    Earn 50 points for every item you find and return to its owner.
+                </p>
+            </div>
+            
+            <button onclick="alert('Coupons Coming Soon!')" class="w-full py-3 bg-white text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition">
+                Redeem for Canteen Coupons
+            </button>
+        </div>
+
+    </div>
+</section>
+            <section id="view-my-reports" class="hidden max-w-5xl mx-auto animate-fade-in pb-20">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">My Activity</h2>
+            <p class="text-slate-500 dark:text-slate-400">Manage the items you have reported.</p>
+        </div>
+        <div class="bg-indigo-50 dark:bg-slate-800 px-4 py-2 rounded-xl border border-indigo-100 dark:border-slate-700">
+            <span class="text-sm font-bold text-indigo-600 dark:text-indigo-400">
+                Total Reports: <span id="my-report-count">0</span>
+            </span>
+        </div>
+    </div>
+
+    <div id="my-reports-container" class="space-y-4">
+        <div class="text-center py-10">
+            <i class="ph-bold ph-spinner animate-spin text-3xl text-indigo-600"></i>
+        </div>
+    </div>
+</section>
+
+
+<section id="view-settings" class="hidden max-w-2xl mx-auto animate-fade-in pb-20">
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Settings</h2>
+        <p class="text-slate-500 dark:text-slate-400">Manage your profile details and account preferences.</p>
+    </div>
+
+    <div class="space-y-6">
+        <div class="bg-white dark:bg-darkCard p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <h3 class="font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-user-gear text-indigo-500"></i> Edit Profile Details
+            </h3>
+            
+            <form id="settings-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Full Name</label>
+                        <input type="text" id="set-fullname" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">College / Staff ID</label>
+                        <input type="text" id="set-college-id" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Department / Course</label>
+                        <input type="text" id="set-course" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="e.g. B.Sc CS or Admin Dept">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Class / Designation</label>
+                        <input type="text" id="set-class-details" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="e.g. FY-A-45 or Senior Clerk">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Contact Number (Admin Only)</label>
+                    <input type="tel" id="set-contact" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                </div>
+
+                <div class="flex gap-4 mt-2">
+                    <button type="button" id="btn-enable-edit" onclick="lockSettings(false)" class="flex-1 py-3 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition flex justify-center items-center gap-2">
+                        <i class="ph-bold ph-pencil-simple"></i> Edit Profile
+                    </button>
+                    
+                    <button type="button" id="btn-save-settings" onclick="updateProfileSettings()" class="hidden flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition flex justify-center items-center gap-2 shadow-lg shadow-indigo-900/20">
+                        <i class="ph-bold ph-floppy-disk"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="bg-white dark:bg-darkCard p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <h3 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                <i class="ph-fill ph-paint-brush text-indigo-500"></i> Appearance
+            </h3>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="font-bold text-sm text-slate-700 dark:text-slate-300">Dark Mode</p>
+                    <p class="text-xs text-slate-500">Switch between light and dark themes.</p>
+                </div>
+                <button onclick="toggleThemeManual()" class="relative inline-flex h-6 w-11 items-center rounded-full bg-slate-200 dark:bg-indigo-600 transition-colors">
+                    <span class="translate-x-1 dark:translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-darkCard p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <h3 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                <i class="ph-fill ph-bell text-indigo-500"></i> Notifications
+            </h3>
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="font-bold text-sm text-slate-700 dark:text-slate-300">Email Alerts</p>
+                    <p class="text-xs text-slate-500">Get notified when someone claims your item.</p>
+                </div>
+                <button onclick="toggleSwitch(this)" class="relative inline-flex h-6 w-11 items-center rounded-full bg-indigo-600 transition-colors duration-200">
+                    <span class="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200"></span>
+                </button>
+            </div>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="font-bold text-sm text-slate-700 dark:text-slate-300">New Item Alerts</p>
+                    <p class="text-xs text-slate-500">Notify me when items are found near me.</p>
+                </div>
+                <button onclick="toggleSwitch(this)" class="relative inline-flex h-6 w-11 items-center rounded-full bg-slate-200 transition-colors duration-200">
+                    <span class="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-darkCard p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <h3 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                <i class="ph-fill ph-shield-check text-indigo-500"></i> Security
+            </h3>
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="font-bold text-sm text-slate-700 dark:text-slate-300">Password</p>
+                    <p class="text-xs text-slate-500">Update your account password.</p>
+                </div>
+                <button onclick="alert('A password reset link has been sent to your email!')" class="px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                    Change Password
+                </button>
+            </div>
+            <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700">
+                <div>
+                    <p class="font-bold text-sm text-red-500">Delete Account</p>
+                    <p class="text-xs text-slate-500">Permanently remove your data.</p>
+                </div>
+                <button onclick="alert('Please contact the Admin to delete your account.')" class="px-4 py-2 bg-red-50 text-red-500 rounded-lg text-xs font-bold hover:bg-red-100 transition">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+        </div>
+    </main>
+
+   <script src="config.js"></script>
+    <script type="module" src="supabase.js"></script>
+    <script type="module" src="./script.js"></script>
+
+
+
+    <script>
+        // ==========================================
+        // UI INTERACTION SCRIPTS
+        // ==========================================
+
+        // 1. Dark Mode Logic (Header Toggle)
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const icon = document.getElementById('theme-icon');
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.classList.replace('ph-sun', 'ph-moon');
+                icon.parentElement.classList.remove('text-yellow-400');
+            } else {
+                html.classList.add('dark');
+                icon.classList.replace('ph-moon', 'ph-sun');
+                icon.parentElement.classList.add('text-yellow-400');
+            }
+        });
+
+        // 2. Settings Page: Dark Mode Toggle Helper
+        window.toggleThemeManual = function() {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                // Optional: Sync the header icon if needed
+                if(icon) icon.classList.replace('ph-sun', 'ph-moon');
+            } else {
+                html.classList.add('dark');
+                // Optional: Sync the header icon if needed
+                if(icon) icon.classList.replace('ph-moon', 'ph-sun');
+            }
+        }
+
+        // 3. Settings Page: Notification Sliders Helper
+        window.toggleSwitch = function(btn) {
+            // Toggle Background Color
+            btn.classList.toggle('bg-indigo-600');
+            btn.classList.toggle('bg-slate-200');
+
+            // Move the Dot
+            const dot = btn.querySelector('span');
+            if (dot.classList.contains('translate-x-1')) {
+                dot.classList.replace('translate-x-1', 'translate-x-6'); // Move Right
+            } else {
+                dot.classList.replace('translate-x-6', 'translate-x-1'); // Move Left
+            }
+        }
+
+        // 3.5 Mobile Menu Toggle
+        window.toggleMobileMenu = function() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('hidden')) {
+                // Open menu: remove hidden, add absolute positioning so it floats over content
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('absolute', 'flex', 'h-full', 'left-0', 'top-0');
+            } else {
+                // Close menu
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('absolute', 'flex', 'h-full', 'left-0', 'top-0');
+            }
+        };
+
+        // 4. Navigation Logic (Switching Sections)
+        // ==========================================
+        // UI: NAVIGATION & BACK BUTTON FIX
+        // ==========================================
+        window.showSection = function(id, pushToHistory = true) {
+            // 1. Hide all sections
+            const sections = ['dashboard', 'report-lost', 'report-found', 'item-details', 'profile', 'my-reports', 'rewards', 'settings'];
+            sections.forEach(s => {
+                const el = document.getElementById('view-' + s);
+                if(el) el.classList.add('hidden');
+            });
+
+            // 2. Show the requested section
+            const activeEl = document.getElementById('view-' + id);
+            if (activeEl) activeEl.classList.remove('hidden');
+
+            // ---- ADD THESE 4 LINES HERE ----
+            if (id === 'profile') window.loadProfile();
+            if (id === 'my-reports') window.loadMyReports();
+            if (id === 'rewards') window.loadRewards();
+            if (id === 'settings') window.loadSettings();
+
+            // 3. Mobile Menu Auto-Close
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                if(sidebar && !sidebar.classList.contains('hidden')) {
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('absolute', 'flex', 'h-full', 'left-0', 'top-0');
+                }
+            }
+
+            // 4. Update the Browser URL & History (The Back Button Fix)
+            if (pushToHistory) {
+                // Adds a hash like "#profile" to the URL without reloading the page
+                history.pushState({ section: id }, "", "#" + id);
+            }
+
+            // 5. Update Active Sidebar Colors
+            // First, remove the colored background from ALL buttons
+            document.querySelectorAll('aside button[onclick^="showSection"]').forEach(btn => {
+                btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'dark:bg-indigo-900/20', 'dark:text-indigo-400');
+                btn.classList.add('text-slate-500', 'hover:bg-slate-50', 'dark:text-slate-400');
+            });
+
+            // Then, add the colored background ONLY to the button that was just clicked
+            const activeBtn = document.querySelector(`aside button[onclick="showSection('${id}')"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-500', 'hover:bg-slate-50', 'dark:text-slate-400');
+                activeBtn.classList.add('bg-indigo-50', 'text-indigo-600', 'dark:bg-indigo-900/20', 'dark:text-indigo-400');
+            }
+        };
+
+        // ==========================================
+        // LISTEN FOR BROWSER BACK BUTTON
+        // ==========================================
+        window.addEventListener('popstate', (event) => {
+            // If the user hits 'Back', check if there's a saved section in history
+            if (event.state && event.state.section) {
+                showSection(event.state.section, false); // false = don't push to history again
+            } else {
+                // Default fallback if they back out too far
+                showSection('dashboard', false); 
+            }
+        });
+
+        // Initialize URL Hash on Load (e.g., if they refresh on #profile)
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                showSection(hash, false);
+            }
+        });
+        
+
+        document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("generate-btn")
+    ?.addEventListener("click", generatePreview);
+});
+
+    </script>
+
+    <div id="modal-complete-profile" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl p-8 shadow-2xl border border-indigo-500/30">
+        
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i class="ph-bold ph-user-circle"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Profile Incomplete</h2>
+            <p class="text-slate-500 dark:text-slate-400">Please update your academic details to continue.</p>
+        </div>
+
+        <form id="modal-update-form" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Student ID</label>
+                    <input type="text" id="modal-student-id" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Contact No</label>
+                    <input type="tel" id="modal-contact" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Course</label>
+                    <select id="modal-course" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white">
+                        <option value="B.Sc CS">B.Sc CS</option>
+                        <option value="B.Sc IT">B.Sc IT</option>
+                        <option value="B.Com">B.Com</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Class</label>
+                    <select id="modal-class" class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white">
+                        <option value="FY">FY</option>
+                        <option value="SY">SY</option>
+                        <option value="TY">TY</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Div</label>
+                    <input type="text" id="modal-div" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Roll No</label>
+                    <input type="text" id="modal-roll" required class="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl dark:text-white">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-lg">
+                Save & Continue
+            </button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

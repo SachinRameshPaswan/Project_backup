@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control | Connect & Found</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
+
+    <aside id="admin-sidebar" class="w-64 bg-slate-900 text-white hidden md:flex flex-col justify-between p-6 shadow-2xl z-50">
+        <div>
+            <div class="flex items-center gap-3 mb-12">
+                <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center text-white font-bold">
+                    <i class="ph-bold ph-shield-check text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold leading-none">Admin</h1>
+                    <span class="text-xs text-slate-400">Control Panel</span>
+                </div>
+            </div>
+
+            <nav class="space-y-2">
+                <button onclick="showSection('overview')" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold bg-indigo-600 rounded-xl transition shadow-lg shadow-indigo-900/50">
+                    <i class="ph-fill ph-chart-bar text-lg"></i> Overview
+                </button>
+                <button onclick="showSection('claims')" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition">
+                    <i class="ph-bold ph-gavel text-lg"></i> Verify Claims
+                </button>
+                <button onclick="showSection('users')" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition">
+                    <i class="ph-bold ph-users text-lg"></i> User List
+                </button>
+            </nav>
+        </div>
+
+        <button id="logout-btn" class="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 font-bold">
+            <i class="ph-bold ph-sign-out"></i> Log out
+        </button>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto relative bg-slate-50">
+    <header class="bg-white border-b border-slate-200 px-6 py-5 flex items-center gap-4 sticky top-0 z-10">
+        <button onclick="toggleAdminMenu()" class="md:hidden text-2xl text-slate-600 hover:text-indigo-600 transition">
+            <i class="ph ph-list"></i>
+        </button>
+        <h2 class="text-xl font-bold text-slate-800 flex-1" id="page-title">Dashboard Overview</h2>
+
+        <div class="flex items-center gap-3">
+            <div class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold border border-green-200 flex items-center gap-1">
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> System Online
+            </div>
+            <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">A</div>
+        </div>
+    </header>
+
+    <div class="p-8 space-y-8">
+        
+        <section id="section-overview" class="animate-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase">Total Reports</p>
+                            <h3 class="text-3xl font-bold text-slate-800" id="stat-total">0</h3>
+                        </div>
+                        <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><i class="ph-bold ph-files text-xl"></i></div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase">Active / Pending</p>
+                            <h3 class="text-3xl font-bold text-orange-600" id="stat-pending">0</h3>
+                        </div>
+                        <div class="p-2 bg-orange-50 text-orange-600 rounded-lg"><i class="ph-bold ph-clock text-xl"></i></div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase">Resolved</p>
+                            <h3 class="text-3xl font-bold text-emerald-600" id="stat-resolved">0</h3>
+                        </div>
+                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i class="ph-bold ph-check-circle text-xl"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="font-bold text-slate-800">Recent Activity Log</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4">Item & Location</th>
+                                <th class="px-6 py-4">Reporter Identity</th>
+                                <th class="px-6 py-4">Type</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-claims" class="hidden animate-fade-in">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800">Archived & Solved Cases</h3>
+                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg font-bold">History</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4">Item Details</th>
+                                <th class="px-6 py-4">Solved By</th>
+                                <th class="px-6 py-4">Date Solved</th>
+                                <th class="px-6 py-4 text-right">Records</th>
+                            </tr>
+                        </thead>
+                        <tbody id="claims-table-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-users" class="hidden animate-fade-in">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200">
+                    <h3 class="font-bold text-slate-800">Registered Users Directory</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4">User Profile</th>
+                                <th class="px-6 py-4">College ID / Role</th>
+                                <th class="px-6 py-4">Contact Info</th>
+                                <th class="px-6 py-4 text-right">Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<div id="inspect-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-4 animate-fade-in">
+    <div class="bg-white w-full max-w-5xl h-[85vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        
+        <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+            <div>
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="ph-bold ph-magnifying-glass"></i> Case Verification
+                </h3>
+                <p class="text-xs text-slate-500">Compare evidence and verify reporter identity.</p>
+            </div>
+            <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition">
+                <i class="ph-bold ph-x"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <div class="space-y-6">
+                <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+                    <h4 class="font-bold text-indigo-800 mb-2 text-sm uppercase">1. Item Under Review</h4>
+                    <div class="h-64 bg-white rounded-lg border border-slate-200 overflow-hidden mb-4 relative group">
+                        <img id="modal-main-img" src="" class="w-full h-full object-contain">
+                        <div class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center text-white text-xs">
+                            Real Evidence / AI Generation
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <h2 id="modal-title" class="text-2xl font-bold text-slate-800">Title</h2>
+                        <p id="modal-desc" class="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200">Description...</p>
+                        <div class="flex gap-2 text-xs font-bold mt-2">
+                            <span id="modal-type" class="px-2 py-1 rounded bg-slate-200">TYPE</span>
+                            <span id="modal-status" class="px-2 py-1 rounded bg-slate-200">STATUS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <h4 class="font-bold text-slate-500 mb-3 text-sm uppercase">2. Reporter Identity</h4>
+                    <div class="flex items-start gap-4">
+                        <div id="modal-user-initial" class="w-12 h-12 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-xl">U</div>
+                        <div class="space-y-1">
+                            <p id="modal-user-name" class="font-bold text-slate-800 text-lg">User Name</p>
+                            <div class="grid grid-cols-2 gap-x-8 gap-y-1 text-sm text-slate-600">
+                                <p><span class="font-semibold text-slate-400">Role:</span> <span id="modal-user-role">-</span></p>
+                                <p><span class="font-semibold text-slate-400">ID:</span> <span id="modal-user-id">-</span></p>
+                                <p><span class="font-semibold text-slate-400">Course:</span> <span id="modal-user-course">-</span></p>
+                                <p><span class="font-semibold text-slate-400">Phone:</span> <span id="modal-user-phone" class="font-mono font-bold text-indigo-600 bg-indigo-50 px-1 rounded">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col h-full">
+                <div class="flex-1 mb-6">
+                    <h4 class="font-bold text-slate-500 mb-3 text-sm uppercase flex justify-between items-center">
+                        3. Potential Database Matches
+                        <span class="text-[10px] bg-slate-100 px-2 py-1 rounded-full">AI Search</span>
+                    </h4>
+                    
+                    <div id="match-container" class="space-y-3 h-96 overflow-y-auto pr-2">
+                        <div class="text-center py-10 text-slate-400 text-sm border-2 border-dashed border-slate-200 rounded-xl">
+                            Loading potential matches...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 text-white p-5 rounded-2xl">
+                    <h4 class="font-bold text-slate-400 text-xs uppercase mb-3">4. Admin Decision</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="btn-approve" class="py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold transition flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-check-circle"></i> Verify & Solve
+                        </button>
+                        <button id="btn-delete" class="py-3 bg-red-600 hover:bg-red-500 rounded-xl font-bold transition flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-trash"></i> Reject & Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="edit-user-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-4 animate-fade-in">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden">
+        
+        <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="ph-bold ph-pencil-simple"></i> Edit User Details
+            </h3>
+            <button onclick="closeEditModal()" class="text-white/80 hover:text-white transition">
+                <i class="ph-bold ph-x text-xl"></i>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+            <input type="hidden" id="edit-db-id"> <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Full Name</label>
+                    <input type="text" id="edit-fullname" class="w-full p-2 border border-slate-300 rounded-lg text-sm font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">System Role</label>
+                    <select id="edit-role" class="w-full p-2 border border-slate-300 rounded-lg text-sm bg-slate-50">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">College ID</label>
+                    <input type="text" id="edit-college-id" class="w-full p-2 border border-slate-300 rounded-lg text-sm font-mono text-indigo-600">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contact No</label>
+                    <input type="tel" id="edit-contact" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">User Category</label>
+                <select id="edit-user-type" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                    <option value="student">Student</option>
+                    <option value="faculty">Faculty / Teacher</option>
+                    <option value="staff">Staff / Employee</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Course / Dept</label>
+                    <input type="text" id="edit-course" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Class / Designation</label>
+                    <input type="text" id="edit-class" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                </div>
+            </div>
+
+            <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 mt-4">
+                <button onclick="closeEditModal()" class="px-4 py-2 text-slate-500 font-bold hover:bg-slate-100 rounded-lg text-sm">Cancel</button>
+                <button onclick="saveUserChanges()" class="px-4 py-2 bg-indigo-600 text-white font-bold rounded-lg text-sm hover:bg-indigo-700 shadow-lg">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="config.js"></script>
+    <script type="module" src="supabase.js"></script>
+    <script type="module">
+    import { supabase } from './supabase.js';
+
+    // 1. ADMIN CHECK
+window.currentAdminRole = 'admin'; // Global variable
+
+async function checkAdmin() {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error || !data.session) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const userId = data.session.user.id;
+
+    const { data: profile, error: roleError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
+
+    // Kick out anyone who isn't admin or super_admin
+    if (roleError || !['admin', 'super_admin'].includes(profile?.role)) {
+        alert("Unauthorized Access");
+        window.location.href = "index.html";
+        return;
+    }
+
+    window.currentAdminRole = profile.role; // Save role for permissions
+
+   // STRICT GATEKEEPER: Force Profile Completion
+    if (!profile.college_id || !profile.contact_no || !profile.full_name) {
+        alert("Security Requirement: You must complete your profile details before accessing the system.");
+        
+        // FIX: Instead of redirecting to index.html (which causes the loop), 
+        // we open the built-in edit modal right here for the current admin!
+        window.openEditUser(userId); 
+        
+        // We return here so the dashboard data doesn't load until they save
+        return; 
+    }
+    
+    loadAdminData();
+}
+
+    // 2. NAVIGATION SWITCHER (Fixes the button issue)
+// MOBILE MENU TOGGLE FOR ADMIN
+    window.toggleAdminMenu = function() {
+        const sidebar = document.getElementById('admin-sidebar');
+        if (sidebar.classList.contains('hidden')) {
+            sidebar.classList.remove('hidden');
+            sidebar.classList.add('absolute', 'flex', 'h-full', 'left-0', 'top-0');
+        } else {
+            sidebar.classList.add('hidden');
+            sidebar.classList.remove('absolute', 'flex', 'h-full', 'left-0', 'top-0');
+        }
+    };
+
+    // 2. NAVIGATION SWITCHER (Updated with Colors & Back Button)
+    window.showSection = (id, pushToHistory = true) => {
+        // Hide all sections
+        ['overview', 'claims', 'users'].forEach(sec => {
+            const el = document.getElementById('section-' + sec);
+            if(el) el.classList.add('hidden');
+        });
+
+        // Show selected section
+        const activeEl = document.getElementById(`section-${id}`);
+        if(activeEl) activeEl.classList.remove('hidden');
+
+        // Auto-close sidebar on mobile
+        if (window.innerWidth < 768) {
+            const sidebar = document.getElementById('admin-sidebar');
+            if(sidebar && !sidebar.classList.contains('hidden')) {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('absolute', 'flex', 'h-full', 'left-0', 'top-0');
+            }
+        }
+
+        // HISTORY API: Fixes the back button
+        if (pushToHistory) {
+            history.pushState({ section: id }, "", "#" + id);
+        }
+
+        // DYNAMIC COLORS: Update Sidebar Button Styles
+        document.querySelectorAll('aside nav button').forEach(btn => {
+            btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-900/50');
+            btn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800');
+        });
+
+        const activeBtn = document.querySelector(`aside nav button[onclick="showSection('${id}')"]`);
+        if (activeBtn) {
+            activeBtn.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800');
+            activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-900/50');
+        }
+
+        // Load relevant data
+        if (id === 'overview') {
+            document.getElementById('page-title').innerText = "Dashboard Overview";
+            loadAdminData();
+        } else if (id === 'claims') {
+            document.getElementById('page-title').innerText = "Resolved History";
+            loadResolvedHistory();
+        } else if (id === 'users') {
+            document.getElementById('page-title').innerText = "User Management";
+            loadUsers();
+        }
+    };
+
+    // Listen for Browser Back Button
+    window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.section) {
+            showSection(event.state.section, false);
+        } else {
+            showSection('overview', false); 
+        }
+    });
+
+    // Check URL hash on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash) showSection(hash, false);
+    });
+
+// 3. LOAD OVERVIEW (Active & Pending Items)
+    async function loadAdminData() {
+        // Changed to .select('*') to prevent the 400 Bad Request crash
+        const { data: items, error } = await supabase
+            .from('items')
+            .select('*') 
+            .order('created_at', {ascending: false});
+
+        if (error) return console.error("Overview Error:", error);
+        
+        // Stats
+        document.getElementById('stat-total').innerText = items.length;
+        document.getElementById('stat-pending').innerText = items.filter(i => i.status === 'PENDING').length;
+        document.getElementById('stat-resolved').innerText = items.filter(i => i.status === 'CLAIMED').length;
+
+        const tbody = document.getElementById('admin-table-body');
+        tbody.innerHTML = '';
+
+        items.forEach(item => {
+            const badge = item.item_type === 'LOST' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600';
+            
+            const row = `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="px-6 py-4">
+                        <p class="font-bold text-slate-700">${item.title}</p>
+                        <p class="text-[10px] text-slate-400">${item.location}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-sm font-semibold text-slate-500">System Record</p>
+                        <span class="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-bold text-slate-500">USER</span>
+                    </td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 rounded-md text-xs font-bold ${badge}">${item.item_type}</span></td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-md text-xs font-bold ${item.status === 'CLAIMED' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="window.openInspectModal('${item.item_id}')" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl text-xs font-bold shadow-lg shadow-indigo-200 flex items-center gap-2 ml-auto">
+                            <i class="ph-bold ph-eye"></i> INSPECT
+                        </button>
+                    </td>
+                </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // 4. LOAD RESOLVED HISTORY (Repurposed "Verify Claims")
+    async function loadResolvedHistory() {
+        // Removed the 'users(*)' join to fix the 400 Bad Request error
+        const { data: items, error } = await supabase
+            .from('items')
+            .select('*') 
+            .eq('status', 'CLAIMED') // Only show Solved items
+            .order('updated_at', {ascending: false});
+
+        if (error) {
+            console.error("Database Error:", error);
+            return;
+        }
+
+        const tbody = document.getElementById('claims-table-body');
+        tbody.innerHTML = '';
+        
+        // Safety check to fix the "length of null" TypeError
+        if(!items || items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-400">No solved cases yet.</td></tr>';
+            return;
+        }
+
+        items.forEach(item => {
+            const row = `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="px-6 py-4 font-bold text-slate-700">${item.title}</td>
+                    <td class="px-6 py-4 text-sm text-slate-600">User Data Hidden</td>
+                    <td class="px-6 py-4 text-xs text-slate-400">${new Date(item.created_at).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="window.deleteItem('${item.item_id}')" class="text-red-400 hover:text-red-600 font-bold text-xs">Remove Record</button>
+                    </td>
+                </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // 5. LOAD USER LIST (New Feature!)
+    async function loadUsers() {
+        const { data: users } = await supabase.from('users').select('*').order('created_at', {ascending: false});
+        const tbody = document.getElementById('users-table-body');
+        tbody.innerHTML = '';
+
+        users.forEach(u => {
+            const roleBadge = u.role === 'admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
+            
+            const row = `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="px-6 py-4">
+                        <p class="font-bold text-slate-700">${u.full_name}</p>
+                        <p class="text-xs text-slate-400">${u.email}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-sm font-medium">${u.college_id || 'N/A'}</p>
+                        <span class="text-[10px] px-2 py-0.5 rounded font-bold ${roleBadge} uppercase">${u.role || 'user'}</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-indigo-600 font-bold">
+                        ${u.contact_no || '-'}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="window.openEditUser('${u.user_id}')" class="text-indigo-600 hover:text-indigo-800 font-bold text-xs bg-indigo-50 px-3 py-1 rounded border border-indigo-200">
+    EDIT
+</button>
+                    </td>
+                </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // 6. GLOBAL ACTIONS
+    window.adminResolveItem = async (id) => {
+        if(!confirm("Mark as Solved/Archived?")) return;
+        const { error } = await supabase.from('items').update({ status: 'CLAIMED' }).eq('item_id', id);
+        if(!error) loadAdminData();
+    };
+
+    window.deleteItem = async (id) => {
+        if(!confirm("Permanently Delete?")) return;
+        const { error } = await supabase.from('items').delete().eq('item_id', id);
+        if(!error) {
+            // Refresh current view
+            if(!document.getElementById('section-overview').classList.contains('hidden')) loadAdminData();
+            else loadResolvedHistory();
+        }
+    };
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+    });
+
+    // ==========================================
+// 7. INSPECTION & MATCHING LOGIC
+// ==========================================
+
+window.openInspectModal = async (itemId) => {
+    const modal = document.getElementById('inspect-modal');
+    modal.classList.remove('hidden');
+
+    // 1. Fetch Full Details of the Main Item (Removed users join)
+    const { data: item } = await supabase
+        .from('items')
+        .select('*')
+        .eq('item_id', itemId)
+        .single();
+
+    if (!item) return alert("Error loading item details.");
+
+    // 2. Populate Left Column (Main Item)
+    const isLost = item.item_type === 'LOST';
+    document.getElementById('modal-main-img').src = isLost ? item.ai_image_url : item.image_url;
+    document.getElementById('modal-title').innerText = item.title;
+    document.getElementById('modal-desc').innerText = item.description;
+    document.getElementById('modal-type').innerText = item.item_type;
+    document.getElementById('modal-status').innerText = item.status;
+    
+    // 3. Populate Reporter Details (Safely mock missing data due to missing foreign key)
+    document.getElementById('modal-user-name').innerText = "Data Protected";
+    document.getElementById('modal-user-initial').innerText = "U";
+    document.getElementById('modal-user-role').innerText = 'Student';
+    document.getElementById('modal-user-id').innerText = 'N/A';
+    document.getElementById('modal-user-course').innerText = 'N/A';
+    document.getElementById('modal-user-phone').innerText = 'Hidden';
+
+    // 4. Attach Actions to Buttons
+    document.getElementById('btn-approve').onclick = () => window.adminResolveItem(item.item_id);
+    document.getElementById('btn-delete').onclick = () => window.deleteItem(item.item_id);
+
+    // 5. RUN MATCHING ALGORITHM
+    findPotentialMatches(item);
+};
+
+window.closeModal = () => {
+    document.getElementById('inspect-modal').classList.add('hidden');
+};
+
+// HELPER: Find Matches
+async function findPotentialMatches(currentItem) {
+    const matchContainer = document.getElementById('match-container');
+    matchContainer.innerHTML = '<div class="text-center py-4 text-xs text-slate-400">Searching database...</div>';
+
+    // Logic: If current is FOUND, look for LOST. If LOST, look for FOUND.
+    const targetType = currentItem.item_type === 'LOST' ? 'FOUND' : 'LOST';
+
+    // Simple search: Match category words in title (e.g., "Watch", "Phone", "Bag")
+    // We split the title into words and search for any match
+    const keywords = currentItem.title.split(' ').filter(w => w.length > 3).join(' | ');
+
+    const { data: matches, error } = await supabase
+        .from('items')
+        .select('*')
+        .eq('item_type', targetType) // Opposite type
+        .neq('status', 'CLAIMED')    // Only active items
+        .textSearch('title', keywords, { type: 'websearch', config: 'english' }) // Basic Text Search
+        .limit(5);
+
+    matchContainer.innerHTML = '';
+
+    if (!matches || matches.length === 0) {
+        matchContainer.innerHTML = `
+            <div class="bg-slate-50 p-4 rounded-xl text-center border border-slate-200">
+                <p class="text-sm font-bold text-slate-500">No Direct Matches</p>
+                <p class="text-xs text-slate-400">No items with similar names found.</p>
+            </div>`;
+        return;
+    }
+
+    // Render Matches
+    matches.forEach(match => {
+        const matchImg = match.item_type === 'LOST' ? match.ai_image_url : match.image_url;
+        
+        const card = `
+            <div class="flex gap-3 p-3 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 transition cursor-pointer relative group">
+                <div class="w-16 h-16 bg-slate-100 rounded-lg flex-shrink-0 overflow-hidden">
+                    <img src="${matchImg}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <h5 class="font-bold text-slate-800 text-sm">${match.title}</h5>
+                        <span class="text-[10px] font-bold px-1.5 rounded bg-slate-100 text-slate-500">${match.item_type}</span>
+                    </div>
+                    <p class="text-xs text-slate-500 line-clamp-1">${match.location}</p>
+                    <p class="text-[10px] text-indigo-600 font-bold mt-1">Possible Match</p>
+                </div>
+                
+                <button onclick="alert('Match feature: You would link these two cases here.')" class="absolute right-3 bottom-3 bg-indigo-600 text-white px-3 py-1 rounded-lg text-xs font-bold opacity-0 group-hover:opacity-100 transition shadow-lg">
+                    Link
+                </button>
+            </div>
+        `;
+        matchContainer.innerHTML += card;
+    });
+}
+
+// ==========================================
+// 8. USER MANAGEMENT & VALIDATION LOGIC
+// ==========================================
+
+// A. OPEN MODAL & LOAD DATA
+window.openEditUser = async (userId) => {
+    const modal = document.getElementById('edit-user-modal');
+    modal.classList.remove('hidden');
+
+    const { data: user, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+    if (error) {
+        alert("Error fetching user: " + error.message);
+        modal.classList.add('hidden');
+        return;
+    }
+
+    document.getElementById('edit-db-id').value = user.user_id;
+    document.getElementById('edit-fullname').value = user.full_name || '';
+    document.getElementById('edit-user-type').value = user.user_type || 'student';
+    document.getElementById('edit-college-id').value = user.college_id || '';
+    document.getElementById('edit-contact').value = user.contact_no || '';
+    document.getElementById('edit-course').value = user.course || '';
+    document.getElementById('edit-class').value = user.class_details || '';
+
+    // Set up the Role Dropdown
+    const roleSelect = document.getElementById('edit-role');
+    
+    // Inject the options dynamically so we have all 4 roles
+    roleSelect.innerHTML = `
+        <option value="user">User</option>
+        <option value="pending_admin">Pending Admin</option>
+        <option value="admin">Admin</option>
+        <option value="super_admin">Super Admin</option>
+    `;
+    roleSelect.value = user.role || 'user';
+
+    // SUPER ADMIN LOCK: Only super_admin can change roles
+    if (window.currentAdminRole !== 'super_admin') {
+        roleSelect.disabled = true;
+        roleSelect.classList.add('opacity-50', 'cursor-not-allowed');
+        roleSelect.title = "Only Super Admins can change user roles.";
+    } else {
+        roleSelect.disabled = false;
+        roleSelect.classList.remove('opacity-50', 'cursor-not-allowed');
+        roleSelect.title = "";
+    }
+};
+
+// B. CLOSE MODAL
+window.closeEditModal = () => {
+    document.getElementById('edit-user-modal').classList.add('hidden');
+};
+
+// C. SAVE CHANGES (WITH FORCE CHECK)
+window.saveUserChanges = async () => {
+    // 1. Gather Data
+    const userId = document.getElementById('edit-db-id').value;
+    const updates = {
+        full_name: document.getElementById('edit-fullname').value.trim(),
+        role: document.getElementById('edit-role').value,
+        user_type: document.getElementById('edit-user-type').value,
+        college_id: document.getElementById('edit-college-id').value.trim(),
+        contact_no: document.getElementById('edit-contact').value.trim(),
+        course: document.getElementById('edit-course').value.trim(),
+        class_details: document.getElementById('edit-class').value.trim()
+    };
+
+    // 2. FORCE CHECK (Validation)
+    const requiredFields = ['full_name', 'college_id', 'contact_no', 'user_type'];
+    const emptyFields = requiredFields.filter(field => !updates[field]);
+
+    if (emptyFields.length > 0) {
+        alert(`❌ ACTION BLOCKED: The following fields cannot be empty:\n\n- ${emptyFields.join('\n- ')}\n\nPlease fill them in before saving.`);
+        return; // STOP EXECUTION
+    }
+
+    // 3. Confirm Update
+    if (!confirm(`Update details for ${updates.full_name}?`)) return;
+
+    // 4. Send to Supabase
+    const { error } = await supabase
+        .from('users')
+        .update(updates)
+        .eq('user_id', userId);
+
+    if (error) {
+        alert("Error updating: " + error.message);
+    } else {
+        alert("✅ User Profile Updated Successfully!");
+        closeEditModal();
+        loadUsers(); // Refresh the table behind the modal
+    }
+};
+    checkAdmin();
+
+
+</script>
+
+</body>
+</html>
